@@ -1,6 +1,7 @@
 package com.project.ecommerce_backend.api.Controller.auth;
 
 import com.project.ecommerce_backend.Exceptions.EmailFailureException;
+import com.project.ecommerce_backend.Exceptions.EmailNotFoundException;
 import com.project.ecommerce_backend.Exceptions.UserAlreadyExistsException;
 import com.project.ecommerce_backend.Exceptions.UserNoVerifiedException;
 import com.project.ecommerce_backend.Models.LocalUser;
@@ -8,7 +9,9 @@ import com.project.ecommerce_backend.api.model.LoginBody;
 import com.project.ecommerce_backend.api.model.LoginResponse;
 import com.project.ecommerce_backend.api.model.RegistrationBody;
 import com.project.ecommerce_backend.service.UserService;
+import io.micrometer.observation.Observation;
 import jakarta.validation.Valid;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -76,6 +79,18 @@ public class AuthenticationController {
     @GetMapping("/me")
     public LocalUser getLoggedInUserProfile(@AuthenticationPrincipal LocalUser user){
         return user;
+    }
+
+    @PostMapping("/forgot")
+    public ResponseEntity forgotPassword(@RequestParam String email){
+        try{
+            userService.forgotPassword(email);
+            return ResponseEntity.ok().build();
+        } catch (EmailNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build() ;
+        } catch (EmailFailureException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }

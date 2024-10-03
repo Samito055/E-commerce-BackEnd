@@ -1,6 +1,7 @@
 package com.project.ecommerce_backend.service;
 
 import com.project.ecommerce_backend.Exceptions.EmailFailureException;
+import com.project.ecommerce_backend.Exceptions.EmailNotFoundException;
 import com.project.ecommerce_backend.Exceptions.UserAlreadyExistsException;
 import com.project.ecommerce_backend.Exceptions.UserNoVerifiedException;
 import com.project.ecommerce_backend.Models.LocalUser;
@@ -103,6 +104,17 @@ public class UserService {
         }
 
         return false;
+    }
+
+    public void forgotPassword(String email) throws EmailNotFoundException, EmailFailureException {
+        Optional<LocalUser> opUser = localUserDAO.findByEmailIgnoreCase(email);
+        if (opUser.isPresent()) {
+            LocalUser user = opUser.get();
+            String token = jwtService.generatePasswordResetJWT(user);
+            emailService.sendPasswordResetEmail(user, token);
+        } else {
+            throw new EmailNotFoundException();
+        }
     }
 
 }
