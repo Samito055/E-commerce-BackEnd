@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cglib.core.Local;
 
 import java.io.UnsupportedEncodingException;
 
@@ -43,17 +44,24 @@ public class JWTServiceTest {
     }
 
     @Test
-    public void testJWTNotGenerateByUs() throws UnsupportedEncodingException {
+    public void testLoginJWTNotGenerateByUs() throws UnsupportedEncodingException {
         String token =
-        JWT.create().withClaim("USERNAME", "UserA").sign(Algorithm.HMAC256("NotTheRealSecret"));
+        JWT.create().withClaim("RESET_PASSWORD_EMAIL", "UserA@junit.com").sign(Algorithm.HMAC256("NotTheRealSecret"));
         Assertions.assertThrows(SignatureVerificationException.class, () -> jwtService.getUsername(token));
     }
 
     @Test
-    public void testJWTCorrectlySignedNoIssuer() throws UnsupportedEncodingException {
-        String token = JWT.create().withClaim("USERNAME", "UserA")
+    public void testLoginJWTCorrectlySignedNoIssuer() throws UnsupportedEncodingException {
+        String token = JWT.create().withClaim("RESET_PASSWORD_EMAIL", "UserA@junit.com")
                 .sign(Algorithm.HMAC256(algorithmKey));
-        Assertions.assertThrows(InvalidClaimException.class, () -> jwtService.getUsername(token));
+        Assertions.assertThrows(InvalidClaimException.class, () -> jwtService.getResetPasswordEmailKey(token));
+    }
+
+    @Test
+    public void testPasswordResetToken(){
+        LocalUser user = localUserDAO.findByUsernameIgnoreCase("UserA").get();
+        String token = jwtService.generatePasswordResetJWT(user);
+        Assertions.assertEquals(user.getEmail(), jwtService.getResetPasswordEmailKey(token), "Email should match inside " + "JWT");
     }
 
 

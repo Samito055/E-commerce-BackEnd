@@ -9,8 +9,10 @@ import com.project.ecommerce_backend.Models.VerificationToken;
 import com.project.ecommerce_backend.Models.dao.LocalUserDAO;
 import com.project.ecommerce_backend.Models.dao.VerificationTokenDAO;
 import com.project.ecommerce_backend.api.model.LoginBody;
+import com.project.ecommerce_backend.api.model.PasswordResetBody;
 import com.project.ecommerce_backend.api.model.RegistrationBody;
 import jakarta.transaction.Transactional;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -115,6 +117,17 @@ public class UserService {
         } else {
             throw new EmailNotFoundException();
         }
+    }
+
+    public void resetPassword(PasswordResetBody body){
+        String email = jwtService.getResetPasswordEmailKey(body.getToken());
+        Optional <LocalUser> opUser = localUserDAO.findByEmailIgnoreCase(email);
+        if (opUser.isPresent()){
+            LocalUser user = opUser.get();
+            user.setPassword(encryptionService.encryptPassword(body.getPassword()));
+            localUserDAO.save(user);
+        }
+
     }
 
 }

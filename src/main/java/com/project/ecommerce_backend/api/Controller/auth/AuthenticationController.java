@@ -7,6 +7,7 @@ import com.project.ecommerce_backend.Exceptions.UserNoVerifiedException;
 import com.project.ecommerce_backend.Models.LocalUser;
 import com.project.ecommerce_backend.api.model.LoginBody;
 import com.project.ecommerce_backend.api.model.LoginResponse;
+import com.project.ecommerce_backend.api.model.PasswordResetBody;
 import com.project.ecommerce_backend.api.model.RegistrationBody;
 import com.project.ecommerce_backend.service.UserService;
 import io.micrometer.observation.Observation;
@@ -92,5 +93,11 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    @PostMapping("/reset")
+    public ResponseEntity resetPassword(@Valid @RequestBody PasswordResetBody body){
+        userService.resetPassword(body);
+         return ResponseEntity.ok().build();
+    }
+
 
 }
