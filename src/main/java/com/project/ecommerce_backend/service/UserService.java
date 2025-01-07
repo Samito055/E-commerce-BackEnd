@@ -12,7 +12,6 @@ import com.project.ecommerce_backend.api.model.LoginBody;
 import com.project.ecommerce_backend.api.model.PasswordResetBody;
 import com.project.ecommerce_backend.api.model.RegistrationBody;
 import jakarta.transaction.Transactional;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;

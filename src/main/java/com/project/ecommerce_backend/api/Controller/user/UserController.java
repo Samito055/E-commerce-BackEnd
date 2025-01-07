@@ -4,15 +4,11 @@ package com.project.ecommerce_backend.api.Controller.user;
 import com.project.ecommerce_backend.Models.Address;
 import com.project.ecommerce_backend.Models.LocalUser;
 import com.project.ecommerce_backend.Models.dao.AddressDAO;
-import com.project.ecommerce_backend.Models.dao.LocalUserDAO;
-import org.apache.coyote.Response;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
